@@ -1,0 +1,28 @@
+// Normally I use this gradle script for building when the pipeline uses Jenkins as CI/CD orchestrator
+// Common plugin for nodejs
+plugins {
+  id "com.moowork.node" version "1.3.1"
+}
+
+// Declaring node version, attach to lts
+node {
+    version = "16.13.2"
+    download = true
+}
+
+// Better to install yarn
+task installYarn(type: NpmTask) {
+  args = ['install', 'yarn', '--global', '--no-save']
+}
+
+// Useful to install dependencies in a closed build environment
+task installModules(type: NodeTask, dependsOn: installYarn) {
+  script = file('.gradle/nodejs/node-v16.13.2-linux-x64/lib/node_modules/yarn/bin/yarn.js')
+  args = ['install']
+}
+
+// Generating www equivalent folder for reactjs
+task build ( type: NodeTask, dependsOn: installModules ) {  
+    script = file('.gradle/nodejs/node-v16.13.2-linux-x64/lib/node_modules/yarn/bin/yarn.js')
+    args = ['build']
+}
